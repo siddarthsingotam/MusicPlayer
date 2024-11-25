@@ -17,26 +17,33 @@ struct ContentView: View {
     }
     
     func loadMusicFiles() {
-        let fm = FileManager.default
-        let path  = Bundle.main.resourcePath!
-        var musicFiles: [Any] = []
+        // let fm = FileManager.default
+        // let path  = Bundle.main.resourcePath!
+        // var musicFiles: [Any] = []
         
-        do {
-            let items = try fm.contentsOfDirectory(atPath: path)
+        // do {
+        //     let items = try fm.contentsOfDirectory(atPath: path)
             
-            for item in items {
-                if (item.hasSuffix("mp3")) {
-                    musicFiles.append(item)
-                }
-            }
+        //     for item in items {
+        //         if (item.hasSuffix("mp3")) {
+        //             musicFiles.append(item)
+        //         }
+        //     }
             
-            for musicFile in musicFiles {
-                print(musicFile)
-            }
+        //     for musicFile in musicFiles {
+        //         print(musicFile)
+        //     }
             
+        // }
+        // catch {
+        //     print("Error: \(error)")
+        // }
+
+        if let files = Bundle.main.urls(forResourcesWithExtension: "mp3", subdirectory: nil) {
+            files.forEach { print($0) }
         }
-        catch {
-            print("Error: \(error)")
+        else {
+            print("No files found")
         }
     }
     
