@@ -6,8 +6,10 @@
 // fg
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
+    @Environment(\.modelContext) private var context
     @State private var selection: Tab = .favorites
     
     enum Tab {
@@ -21,13 +23,17 @@ struct ContentView: View {
             Favorites()
                 .tabItem({ Label("Favorites", systemImage: "star.fill" ) })
                 .tag(Tab.favorites)
-            
             Albums()
                 .tabItem({ Label("Albums", systemImage: "play.square.stack" ) })
                 .tag(Tab.albums)
             Tracks()
                 .tabItem({ Label("Tracks", systemImage: "music.note.list" ) })
                 .tag(Tab.tracks)
+        }
+        .onAppear {
+            Task {
+                await loadMusicFiles(context)
+            }
         }
     }
 }
