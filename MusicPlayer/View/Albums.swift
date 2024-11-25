@@ -12,3 +12,7 @@ struct Albums: View {
         Text("Albums")
     }
 }
+
+#Preview {
+    Albums()
+}
