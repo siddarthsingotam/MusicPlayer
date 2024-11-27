@@ -16,10 +16,14 @@ struct ContentView: View {
         case favorites
         case albums
         case tracks
+        case nowPlaying
     }
     
     var body: some View {
         TabView(selection: $selection) {
+            NowPlaying()
+                .tabItem({ Label("Now Playing", systemImage: "play.fill" ) })
+                .tag(Tab.nowPlaying)
             Favorites()
                 .tabItem({ Label("Favorites", systemImage: "star.fill" ) })
                 .tag(Tab.favorites)
