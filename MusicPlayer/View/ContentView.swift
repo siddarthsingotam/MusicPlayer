@@ -7,18 +7,10 @@
 
 import SwiftUI
 import SwiftData
-import AVFoundation
 
 struct ContentView: View {
     @Environment(\.modelContext) private var context
-    @State private var selection: Tab = .favorites
-    
-    enum Tab {
-        case favorites
-        case albums
-        case tracks
-        case nowPlaying
-    }
+    @State private var selection: Tab = .nowPlaying
     
     func loadMusicFiles() async {
         let fm = FileManager.default
@@ -107,7 +99,6 @@ struct ContentView: View {
             }
         }
     }
-
     
     var body: some View {
         TabView(selection: $selection) {
@@ -120,16 +111,23 @@ struct ContentView: View {
             Albums()
                 .tabItem({ Label("Albums", systemImage: "play.square.stack" ) })
                 .tag(Tab.albums)
-            Tracks()
+            Tracks(tabSelection: $selection)
                 .tabItem({ Label("Tracks", systemImage: "music.note.list" ) })
                 .tag(Tab.tracks)
         }
         .onAppear {
             Task {
-                await loadMusicFiles()
+                await loadMusicFiles(context)
             }
         }
     }
+}
+
+enum Tab {
+    case nowPlaying
+    case favorites
+    case albums
+    case tracks
 }
 
 #Preview {
