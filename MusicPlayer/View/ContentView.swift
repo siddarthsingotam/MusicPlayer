@@ -3,7 +3,7 @@
 //  MusicPlayer
 //
 //  Created by Siddarth Singotam on 20.11.2024.
-// fg
+// 
 
 import SwiftUI
 import SwiftData
@@ -17,6 +17,7 @@ struct ContentView: View {
         case favorites
         case albums
         case tracks
+        case nowPlaying
     }
     
     func loadMusicFiles() async {
@@ -110,6 +111,9 @@ struct ContentView: View {
     
     var body: some View {
         TabView(selection: $selection) {
+            NowPlaying()
+                .tabItem({ Label("Now Playing", systemImage: "play.fill" ) })
+                .tag(Tab.nowPlaying)
             Tracks(showToggleFavorite: false, showFavoritesOnly: true)
                 .tabItem({ Label("Favorites", systemImage: "star.fill" ) })
                 .tag(Tab.favorites)

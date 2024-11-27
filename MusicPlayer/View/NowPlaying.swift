@@ -11,6 +11,8 @@ import AVKit
 struct NowPlaying: View {
     let audioFile = "something.mp3"
     
+    @Environment(\.colorScheme) var colorScheme
+    
     @State private var player: AVAudioPlayer?
     @State private var isplaying = false
     @State private var totalTime: TimeInterval = 0.0
@@ -26,8 +28,9 @@ struct NowPlaying: View {
                 }
                 Text("Now Playing")
                     .fontWeight(.bold)
-                    .foregroundColor(.black.opacity(0.8))
-            }.padding(.all)
+                    .foregroundColor(.primary) // Dynamic color based on system theme
+            }
+            .padding(.all)
             
             Image("tree")
                 .resizable()
@@ -35,21 +38,21 @@ struct NowPlaying: View {
                 .padding(.horizontal, 55)
                 .clipShape(Circle())
                 .padding(.all, 8)
-                .background(Color(#colorLiteral(red: 0.8980392157, green: 0.9333333333, blue: 1, alpha: 1)))
+                .background(Color(UIColor.secondarySystemBackground)) // Adjusts for light/dark mode
                 .clipShape(Circle())
-                .shadow(color: Color.black.opacity(0.35), radius: 8, x: 8, y: 8)
-                .shadow(color: Color.white, radius: 10, x: -10, y: -10)
+                .shadow(color: colorScheme == .dark ? Color.black.opacity(0.3) : Color.white.opacity(0.5), radius: 8, x: 8, y: 8)
+                .shadow(color: colorScheme == .dark ? Color.black.opacity(0.3) : Color.white.opacity(0.5), radius: 10, x: -10, y: -10)
                 .padding(.top, 35)
             
             Text("Drift")
                 .font(.title)
                 .fontWeight(.bold)
-                .foregroundColor(.black.opacity(0.8))
+                .foregroundColor(.primary) // Dynamic color
                 .padding(.top, 25)
             
             Text("Robot Koch ft. nilu")
                 .font(.caption)
-                .foregroundColor(.black.opacity(0.8))
+                .foregroundColor(.secondary) // Dynamic color
                 .padding(.top, 2)
             
             VStack {
@@ -59,7 +62,7 @@ struct NowPlaying: View {
                     Text(timeString(time: totalTime))
                 }
                 .font(.caption)
-                .foregroundColor(.black.opacity(0.8))
+                .foregroundColor(.primary) // Dynamic color
                 .padding([.top, .leading, .trailing], 25)
                 
                 Slider(value: Binding(get: {currentTime},
@@ -74,7 +77,10 @@ struct NowPlaying: View {
                     ModifiedButtonView(image: "forward.fill")
                 })
             }
-            
+        }
+        .background(Color(UIColor.systemBackground)) // Adjusts based on system theme
+        .onAppear {
+            setupAudio()
         }
     }
     
