@@ -7,9 +7,12 @@
 
 import SwiftUI
 import AVKit
+import SwiftData
 
 struct NowPlaying: View {
-    let audioFile = "something.mp3"
+//    let audioFile = "something.mp3"
+    @Query(sort: \MusicTrack.title) var tracks: [MusicTrack]
+    var audioFile: MusicTrack? { tracks.first(where: { $0.isNowPlaying == true }) }
     
     @State private var player: AVAudioPlayer?
     @State private var isplaying = false
@@ -17,69 +20,74 @@ struct NowPlaying: View {
     @State private var currentTime: TimeInterval = 0.0
     
     var body: some View {
-        VStack {
-            ZStack {
-                HStack {
-                    ModifiedButtonView(image: "arrow.left")
-                    Spacer()
-                    ModifiedButtonView(image: "slider.vertical.3")
-                }
-                Text("Now Playing")
+        if audioFile != nil {
+            VStack {
+                ZStack {
+                    HStack {
+                        ModifiedButtonView(image: "arrow.left")
+                        Spacer()
+                        ModifiedButtonView(image: "slider.vertical.3")
+                    }
+                    Text("Now Playing")
+                        .fontWeight(.bold)
+                        .foregroundColor(.black.opacity(0.8))
+                }.padding(.all)
+                
+                Image("tree")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .padding(.horizontal, 55)
+                    .clipShape(Circle())
+                    .padding(.all, 8)
+                    .background(Color(#colorLiteral(red: 0.8980392157, green: 0.9333333333, blue: 1, alpha: 1)))
+                    .clipShape(Circle())
+                    .shadow(color: Color.black.opacity(0.35), radius: 8, x: 8, y: 8)
+                    .shadow(color: Color.white, radius: 10, x: -10, y: -10)
+                    .padding(.top, 35)
+                
+                Text("\(audioFile!.title!)")
+//                Text("Drift")
+                    .font(.title)
                     .fontWeight(.bold)
                     .foregroundColor(.black.opacity(0.8))
-            }.padding(.all)
-            
-            Image("tree")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .padding(.horizontal, 55)
-                .clipShape(Circle())
-                .padding(.all, 8)
-                .background(Color(#colorLiteral(red: 0.8980392157, green: 0.9333333333, blue: 1, alpha: 1)))
-                .clipShape(Circle())
-                .shadow(color: Color.black.opacity(0.35), radius: 8, x: 8, y: 8)
-                .shadow(color: Color.white, radius: 10, x: -10, y: -10)
-                .padding(.top, 35)
-            
-            Text("Drift")
-                .font(.title)
-                .fontWeight(.bold)
-                .foregroundColor(.black.opacity(0.8))
-                .padding(.top, 25)
-            
-            Text("Robot Koch ft. nilu")
-                .font(.caption)
-                .foregroundColor(.black.opacity(0.8))
-                .padding(.top, 2)
-            
-            VStack {
-                HStack {
-                    Text(timeString(time: currentTime))
-                    Spacer()
-                    Text(timeString(time: totalTime))
-                }
-                .font(.caption)
-                .foregroundColor(.black.opacity(0.8))
-                .padding([.top, .leading, .trailing], 25)
+                    .padding(.top, 25)
                 
-                Slider(value: Binding(get: {currentTime},
-                                      set: {newValue in audioTime(to: newValue)
-                }), in: 0...totalTime)
-                .padding([.top, .leading, .trailing], 20)
+                Text("\(audioFile!.artist!)")
+//                Text("some artists")
+                    .font(.caption)
+                    .foregroundColor(.black.opacity(0.8))
+                    .padding(.top, 2)
+                
+                VStack {
+                    HStack {
+                        Text(timeString(time: currentTime))
+                        Spacer()
+                        Text(timeString(time: totalTime))
+                    }
+                    .font(.caption)
+                    .foregroundColor(.black.opacity(0.8))
+                    .padding([.top, .leading, .trailing], 25)
+                    
+                    Slider(value: Binding(get: {currentTime},
+                                          set: {newValue in audioTime(to: newValue)
+                    }), in: 0...totalTime)
+                    .padding([.top, .leading, .trailing], 20)
+                }
+                HStack {
+                    Button(action: {}, label: {
+                        ModifiedButtonView(image: "backward.fill")
+                        ModifiedButtonView(image: "play.fill")
+                        ModifiedButtonView(image: "forward.fill")
+                    })
+                }
             }
-            HStack {
-                Button(action: {}, label: {
-                    ModifiedButtonView(image: "backward.fill")
-                    ModifiedButtonView(image: "play.fill")
-                    ModifiedButtonView(image: "forward.fill")
-                })
-            }
-            
+        } else {
+            Text("CHOOSE SOMETHING TO PLAY")
         }
     }
     
     private func setupAudio() {
-        guard let url = Bundle.main.url(forResource: audioFile, withExtension: "mp3") else { return }
+        guard let url = Bundle.main.url(forResource: audioFile?.path, withExtension: "mp3") else { return }
         do {
             player = try AVAudioPlayer(contentsOf: url)
             player?.prepareToPlay()
@@ -116,6 +124,6 @@ struct NowPlaying: View {
     }
 }
 
-#Preview {
-    NowPlaying()
-}
+//#Preview {
+//    NowPlaying()
+//}
