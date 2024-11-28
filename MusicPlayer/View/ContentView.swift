@@ -7,6 +7,14 @@
 
 import SwiftUI
 import SwiftData
+import AVFoundation
+
+enum Tab {
+    case nowPlaying
+    case favorites
+    case albums
+    case tracks
+}
 
 struct ContentView: View {
     @Environment(\.modelContext) private var context
@@ -46,9 +54,6 @@ struct ContentView: View {
             var album: String?
             var format: String?
             var artworkData: Data?
-            
-            print(metadata)
-            print()
 
             for item in metadata {
                 do {
@@ -88,7 +93,7 @@ struct ContentView: View {
                 }
             }
             
-            let track = MusicTrack(title: title, releaseDate: creationDate, artist: artist, album: album, format: format, path: fileName, artworkData: artworkData)
+            let track = MusicTrack(title: title, releaseDate: creationDate, artist: artist, album: album, format: format, path: filePath, artworkData: artworkData)
             
             let trackDescriptor = FetchDescriptor<MusicTrack>(
                 predicate: #Predicate { $0.title == title }
@@ -99,13 +104,14 @@ struct ContentView: View {
             }
         }
     }
+
     
     var body: some View {
         TabView(selection: $selection) {
             NowPlaying()
                 .tabItem({ Label("Now Playing", systemImage: "play.fill" ) })
                 .tag(Tab.nowPlaying)
-            Tracks(showToggleFavorite: false, showFavoritesOnly: true)
+            Tracks(tabSelection: $selection, showToggleFavorite: false, showFavoritesOnly: true)
                 .tabItem({ Label("Favorites", systemImage: "star.fill" ) })
                 .tag(Tab.favorites)
             Albums()
@@ -117,17 +123,10 @@ struct ContentView: View {
         }
         .onAppear {
             Task {
-                await loadMusicFiles(context)
+                await loadMusicFiles()
             }
         }
     }
-}
-
-enum Tab {
-    case nowPlaying
-    case favorites
-    case albums
-    case tracks
 }
 
 #Preview {
