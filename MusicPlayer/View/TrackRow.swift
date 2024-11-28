@@ -8,13 +8,24 @@
 import SwiftUI
 
 struct TrackRow: View {
-    var track: MusicTrack
+    @State var track: MusicTrack
+    @State private var errorMessage: String? = nil
     
     var body: some View {
         HStack {
-            Text("\(track.title!)")
+            if let artworkData = track.artworkData, let uiImage = UIImage(data: artworkData) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 50, height: 50)
+            } else if let errorMessage = errorMessage {
+                Text(errorMessage)
+                    .foregroundColor(.red)
+            }
             
-            Spacer()
+            if let trackTitle = track.title {
+                Text(trackTitle)
+            }
             
         }
         .padding(4)
