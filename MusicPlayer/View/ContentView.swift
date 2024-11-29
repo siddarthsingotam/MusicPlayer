@@ -17,12 +17,19 @@ enum Tab {
 }
 
 struct ContentView: View {
+    @Query var tracks: [MusicTrack]
     @Environment(\.modelContext) private var context
     @State private var selection: Tab = .nowPlaying
     
-    func loadMusicFiles() async {
+    func loadMusicFiles() {
         let fm = FileManager.default
-        let path  = Bundle.main.resourcePath!
+        let path = Bundle.main.resourcePath!
+        
+        for track in tracks {
+            let fileName = track.fileName
+            let name = (fileName as NSString).deletingPathExtension
+            if Bundle.main.url(forResource: name, withExtension: "mp3") == nil { context.delete(track) }
+        }
         
         do {
             let files = try fm.contentsOfDirectory(atPath: path)
@@ -50,8 +57,8 @@ struct ContentView: View {
             
             var title: String?
             var creationDate: String?
-            var artist: String?
-            var album: String?
+            var artistName: String?
+            var albumName: String?
             var format: String?
             var artworkData: Data?
 
@@ -70,11 +77,11 @@ struct ContentView: View {
                             }
                         case .commonKeyArtist:
                             if let artistValue = try await item.load(.value) as? String {
-                                artist = artistValue
+                                artistName = artistValue
                             }
                         case .commonKeyAlbumName:
                             if let albumValue = try await item.load(.value) as? String {
-                                album = albumValue
+                                albumName = albumValue
                             }
                         case .commonKeyFormat:
                             if let formatValue = try await item.load(.value) as? String {
@@ -93,10 +100,10 @@ struct ContentView: View {
                 }
             }
             
-            let track = MusicTrack(title: title, releaseDate: creationDate, artist: artist, album: album, format: format, path: filePath, artworkData: artworkData)
+            let track = MusicTrack(title: title, releaseDate: creationDate, artistName: artistName, albumName: albumName, format: format, fileName: fileName, artworkData: artworkData)
             
             let trackDescriptor = FetchDescriptor<MusicTrack>(
-                predicate: #Predicate { $0.title == title }
+                predicate: #Predicate { $0.title == title && $0.fileName == fileName }
             )
             
             if try context.fetch(trackDescriptor).isEmpty {
@@ -111,7 +118,7 @@ struct ContentView: View {
             NowPlaying()
                 .tabItem({ Label("Now Playing", systemImage: "play.fill" ) })
                 .tag(Tab.nowPlaying)
-            Tracks(tabSelection: $selection, showToggleFavorite: false, showFavoritesOnly: true)
+            Tracks(tabSelection: $selection, isFavoriteTab: true, showFavoritesOnly: true)
                 .tabItem({ Label("Favorites", systemImage: "star.fill" ) })
                 .tag(Tab.favorites)
             Albums()
@@ -123,7 +130,7 @@ struct ContentView: View {
         }
         .onAppear {
             Task {
-                await loadMusicFiles()
+                loadMusicFiles()
             }
         }
     }
