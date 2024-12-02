@@ -18,15 +18,27 @@ struct TrackRow: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 50, height: 50)
-            } else if let errorMessage = errorMessage {
-                Text(errorMessage)
-                    .foregroundColor(.red)
+            } else {
+                ZStack {
+                    Color.gray.opacity(0.3)
+                        .frame(width: 50, height: 50)
+                    Image(systemName: "music.note")
+                        .font(.system(size: 12))
+                        .foregroundColor(.white)
+                }
             }
             
-            if let trackTitle = track.title {
-                Text(trackTitle)
+            VStack(alignment: .leading) {
+                Text(track.title ?? "Unknown Track")
+                    .fontWeight(.bold)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Text(track.artistName ?? "Unknown Artist")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
             }
-            
         }
         .padding(4)
     }

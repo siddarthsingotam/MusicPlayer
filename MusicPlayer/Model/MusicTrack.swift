@@ -14,23 +14,23 @@ class MusicTrack {
     var id: UUID
     var title: String?
     var releaseDate: String?
-    var artist: String?
-    var album: String?
+    var artistName: String?
+    var albumName: String?
     var format: String?
-    var path: URL
+    var fileName: String
     var artworkData: Data?
     var isFavorite: Bool = false
     var isNowPlaying: Bool = false
     
     
-    init(_ id: UUID = .init(), title: String?, releaseDate: String?, artist: String?, album: String?, format: String?, path: URL, artworkData: Data?) {
+    init(_ id: UUID = .init(), title: String?, releaseDate: String?, artistName: String?, albumName: String?, format: String?, fileName: String, artworkData: Data?) {
         self.id = id
         self.title = title
         self.releaseDate = releaseDate
-        self.artist = artist
-        self.album = album
+        self.artistName = artistName
+        self.albumName = albumName
         self.format = format
-        self.path = path
+        self.fileName = fileName
         self.artworkData = artworkData
     }
     

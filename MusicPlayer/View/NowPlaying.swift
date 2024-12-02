@@ -53,10 +53,16 @@ struct NowPlaying: View {
                     .foregroundColor(.primary) // Dynamic color
                     .padding(.top, 25)
                 
-                Text("\(audioFile!.artist!)")
-                    .font(.caption)
-                    .foregroundColor(.secondary) // Dynamic color
-                    .padding(.top, 2)
+                if let trackArtist = audioFile?.artistName {
+                    Text(trackArtist)
+                        .font(.caption)
+                        .foregroundColor(.secondary) // Dynamic color
+                        .padding(.top, 2)
+                } else {
+                    Text("Unknown Artist")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                }
                 
                 VStack {
                     HStack {
@@ -83,8 +89,6 @@ struct NowPlaying: View {
             }
             .background(Color(UIColor.systemBackground)) // Adjusts based on system theme
             .onAppear {
-//                print("Now Playing View Appeared")
-//                audioFile = tracks.first(where: { $0.isNowPlaying == true })
                 setupAudio()
             }
         } else {
@@ -93,7 +97,9 @@ struct NowPlaying: View {
     }
     
     private func setupAudio() {
-        guard let url = audioFile?.path else { return }
+        guard let fileName = audioFile?.fileName else { return }
+        let name = (fileName as NSString).deletingPathExtension
+        guard let url = Bundle.main.url(forResource: name, withExtension: "mp3") else { return }
         print(url)
         do {
             player = try AVAudioPlayer(contentsOf: url)
