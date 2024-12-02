@@ -11,6 +11,7 @@ import SwiftData
 
 struct NowPlaying: View {
 //    let audioFile = "something.mp3"
+    @Environment(\.modelContext) private var context
     @Query(sort: \MusicTrack.title) var tracks: [MusicTrack]
     var audioFile: MusicTrack? { tracks.first(where: { $0.isNowPlaying == true }) }
     @Environment(\.colorScheme) var colorScheme
@@ -67,6 +68,23 @@ struct NowPlaying: View {
                 VStack {
                     HStack {
                         Text(timeString(time: currentTime))
+                        Spacer()
+                        Button {
+                            audioFile!.isFavorite.toggle()
+                            
+                            do {
+                                try context.save()
+                            }
+                            catch {
+                                print("Error \(error)")
+                            }
+                        } label: {
+                            Label("Toggle favorite", systemImage: audioFile!.isFavorite ? "heart.fill" : "heart")
+                                .labelStyle(.iconOnly)
+                                .foregroundStyle(.red)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .font(.headline)
                         Spacer()
                         Text(timeString(time: totalTime))
                     }

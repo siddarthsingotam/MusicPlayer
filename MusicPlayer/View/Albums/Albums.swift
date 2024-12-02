@@ -10,6 +10,7 @@ import SwiftData
 
 struct Albums: View {
     @Query var tracks: [MusicTrack]
+    @Binding var tabSelection: Tab
     private var albums: [[MusicTrack]] {
         let groupedTracks = Dictionary(grouping: tracks, by: { $0.albumName })
         return Array(groupedTracks.values)
@@ -25,9 +26,8 @@ struct Albums: View {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 10) {
                     ForEach(albums, id: \.self) { album in
-                        NavigationLink(destination: AlbumTracks(album: album)) {
+                        NavigationLink(destination: AlbumTracks(tabSelection: $tabSelection, album: album)) {
                             AlbumBox(album: album)
-                                
                         }
                         .buttonStyle(PlainButtonStyle())
                     }
