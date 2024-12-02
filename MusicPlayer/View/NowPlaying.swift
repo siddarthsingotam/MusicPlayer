@@ -13,7 +13,9 @@ struct NowPlaying: View {
 //    let audioFile = "something.mp3"
     @Environment(\.modelContext) private var context
     @Query(sort: \MusicTrack.title) var tracks: [MusicTrack]
+
     var audioFile: MusicTrack? { tracks.first(where: { $0.isNowPlaying == true }) }
+    
     @Environment(\.colorScheme) var colorScheme
     
     @State private var player: AVAudioPlayer?
@@ -22,7 +24,6 @@ struct NowPlaying: View {
     @State private var currentTime: TimeInterval = 0.0
     
     var body: some View {
-        if audioFile != nil {
             VStack {
                 ZStack {
                     HStack {
@@ -38,17 +39,14 @@ struct NowPlaying: View {
                 
                 Image("tree")
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .padding(.horizontal, 55)
-                    .clipShape(Circle())
-                    .padding(.all, 8)
-                    .background(Color(UIColor.secondarySystemBackground)) // Adjusts for light/dark mode
-                    .clipShape(Circle())
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 300, height: 300)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
                     .shadow(color: colorScheme == .dark ? Color.black.opacity(0.3) : Color.white.opacity(0.5), radius: 8, x: 8, y: 8)
                     .shadow(color: colorScheme == .dark ? Color.black.opacity(0.3) : Color.white.opacity(0.5), radius: 10, x: -10, y: -10)
                     .padding(.top, 35)
                 
-                Text("\(audioFile!.title!)")
+                Text("\(audioFile?.title! ?? "Unknown Title")")
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundColor(.primary) // Dynamic color
@@ -103,15 +101,13 @@ struct NowPlaying: View {
                         ModifiedButtonView(image: "play.fill")
                         ModifiedButtonView(image: "forward.fill")
                     })
+                    .padding(.bottom, 50) // added some padding for spacing between tab view and audio buttons Hstack
                 }
             }
             .background(Color(UIColor.systemBackground)) // Adjusts based on system theme
             .onAppear {
                 setupAudio()
             }
-        } else {
-            Text("CHOOSE SOMETHING TO PLAY")
-        }
     }
     
     private func setupAudio() {
@@ -155,6 +151,6 @@ struct NowPlaying: View {
     }
 }
 
-//#Preview {
-//    NowPlaying()
-//}
+#Preview {
+    NowPlaying()
+}
