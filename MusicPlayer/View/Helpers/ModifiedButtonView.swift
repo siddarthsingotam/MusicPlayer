@@ -9,11 +9,12 @@ import SwiftUI
 
 struct ModifiedButtonView: View {
     var image: String
+    var action: () -> Void
     
     @Environment(\.colorScheme) var colorScheme // Detect current color scheme
     
     var body: some View {
-        Button(action: {}, label: {
+        Button(action: action, label: {
             Image(systemName: image)
                 .font(.system(size: 14, weight: .bold))
                 .padding(.all, 25)
@@ -49,5 +50,5 @@ struct ModifiedButtonView: View {
 }
 
 #Preview {
-    ModifiedButtonView(image: "pencil")
+    ModifiedButtonView(image: "pencil") {}
 }

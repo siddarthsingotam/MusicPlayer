@@ -27,9 +27,9 @@ struct NowPlaying: View {
             VStack {
                 ZStack {
                     HStack {
-                        ModifiedButtonView(image: "arrow.left")
+                        ModifiedButtonView(image: "arrow.left") {}
                         Spacer()
-                        ModifiedButtonView(image: "slider.vertical.3")
+                        ModifiedButtonView(image: "slider.vertical.3") {}
                     }
                     Text("Now Playing")
                         .fontWeight(.bold)
@@ -46,7 +46,7 @@ struct NowPlaying: View {
                     .shadow(color: colorScheme == .dark ? Color.black.opacity(0.3) : Color.white.opacity(0.5), radius: 10, x: -10, y: -10)
                     .padding(.top, 35)
                 
-                Text("\(audioFile?.title! ?? "Unknown Title")")
+                Text("\(audioFile?.title ?? "Unknown Title")")
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundColor(.primary) // Dynamic color
@@ -68,16 +68,19 @@ struct NowPlaying: View {
                         Text(timeString(time: currentTime))
                         Spacer()
                         Button {
-                            audioFile!.isFavorite.toggle()
+                            if var track = audioFile {
+                                track.isFavorite.toggle()
+                                
+                                do {
+                                    try context.save()
+                                }
+                                catch {
+                                    print("Error \(error)")
+                                }
+                            }
                             
-                            do {
-                                try context.save()
-                            }
-                            catch {
-                                print("Error \(error)")
-                            }
                         } label: {
-                            Label("Toggle favorite", systemImage: audioFile!.isFavorite ? "heart.fill" : "heart")
+                            Label("Toggle favorite", systemImage: audioFile?.isFavorite ?? false ? "heart.fill" : "heart")
                                 .labelStyle(.iconOnly)
                                 .foregroundStyle(.red)
                         }
@@ -96,13 +99,11 @@ struct NowPlaying: View {
                     .padding([.top, .leading, .trailing], 20)
                 }
                 HStack {
-                    Button(action: {}, label: {
-                        ModifiedButtonView(image: "backward.fill")
-                        ModifiedButtonView(image: "play.fill")
-                        ModifiedButtonView(image: "forward.fill")
-                    })
-                    .padding(.bottom, 50) // added some padding for spacing between tab view and audio buttons Hstack
+                    ModifiedButtonView(image: "backward.fill") {}
+                    ModifiedButtonView(image: "play.fill") {}
+                    ModifiedButtonView(image: "forward.fill") {}
                 }
+                .padding(.bottom, 50) // added some padding for spacing between tab view and audio buttons Hstack
             }
             .background(Color(UIColor.systemBackground)) // Adjusts based on system theme
             .onAppear {
