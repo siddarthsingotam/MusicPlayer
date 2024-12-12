@@ -18,6 +18,7 @@ enum Tab {
 
 struct ContentView: View {
     @Query var tracks: [MusicTrack]
+    @Environment(AudioPlayer.self) private var audioPlayer
     @Environment(\.modelContext) private var context
     @State private var selection: Tab = .nowPlaying
     
@@ -132,6 +133,7 @@ struct ContentView: View {
             Task {
                 loadMusicFiles()
             }
+            audioPlayer.loadCurrent()
         }
     }
 }
