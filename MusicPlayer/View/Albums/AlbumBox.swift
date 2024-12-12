@@ -15,7 +15,7 @@ struct AlbumBox: View {
             if let artworkData = album[0].artworkData, let uiImage = UIImage(data: artworkData) {
                 Image(uiImage: uiImage)
                     .resizable()
-                    .cornerRadius(20)
+                    .cornerRadius(10)
                     .scaledToFill()
             } else {
                 ZStack {
@@ -25,7 +25,7 @@ struct AlbumBox: View {
                         .foregroundColor(.white)
                 }
                 .aspectRatio(1, contentMode: .fit)
-                .cornerRadius(20)
+                .cornerRadius(10)
                 .scaledToFill()
             }
 

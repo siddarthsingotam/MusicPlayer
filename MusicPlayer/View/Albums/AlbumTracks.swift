@@ -36,7 +36,7 @@ struct AlbumTracks: View {
                         
                         Rectangle()
                             .fill(LinearGradient(
-                                gradient: Gradient(colors: [Color.clear, Color.black]),
+                                gradient: Gradient(colors: [Color.clear, Color(UIColor.systemBackground)]),
                                 startPoint: .top,
                                 endPoint: .bottom))
                             .frame(height: 70)
