@@ -57,12 +57,9 @@ struct NowPlaying: View {
                 
                 Image("tree")
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .padding(.horizontal, 55)
-                    .clipShape(Circle())
-                    .padding(.all, 8)
-                    .background(Color(UIColor.secondarySystemBackground)) // Adjusts for light/dark mode
-                    .clipShape(Circle())
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 300, height: 300)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
                     .shadow(color: colorScheme == .dark ? Color.black.opacity(0.3) : Color.white.opacity(0.5), radius: 8, x: 8, y: 8)
                     .shadow(color: colorScheme == .dark ? Color.black.opacity(0.3) : Color.white.opacity(0.5), radius: 10, x: -10, y: -10)
                     .padding(.top, 35)
@@ -182,6 +179,7 @@ struct NowPlaying: View {
                     })
                     //                })
                 }
+                .padding(.bottom, 50) // added some padding for spacing between tab view and audio buttons Hstack
             }
             .background(Color(UIColor.systemBackground)) // Adjusts based on system theme
             .onAppear {
